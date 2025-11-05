@@ -1,21 +1,17 @@
 HELP.md
+
+# Build outputs
 target/
 out/
 build/
-
-# IntelliJ IDEA / JetBrains
-.idea/
-*.iml
-*.iws
-
-# VS Code
-.vscode/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 # Gradle
 .gradle/
 !/gradle/wrapper/gradle-wrapper.jar
 
-# Maven
+# Maven (if generated)
 **/pom.xml.tag
 **/pom.xml.releaseBackup
 **/pom.xml.versionsBackup
@@ -24,7 +20,7 @@ release.properties
 dependency-reduced-pom.xml
 *.log
 
-# Spring Boot
+# Spring Boot configs
 **/application-*.yml
 **/application-*.yaml
 **/application-*.properties
@@ -32,60 +28,42 @@ dependency-reduced-pom.xml
 !**/application-example.yaml
 !**/application-example.properties
 
-# Logs / temp
-*.out
-*.tmp
-*.swp
-*.swo
-*.DS_Store
+# IDE files
+## IntelliJ IDEA / JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
 
-# Testing
-.classpath
-.project
-.settings/
-.factorypath
-
-# Docker
-*.pid
-
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### STS ###
+## Eclipse / Spring Tool Suite
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
+## NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
 
-### VS Code ###
+# VS Code
 .vscode/
 
-/src/main/resources/application.yml
-/docker-compose.override.yml
-/otp-code.txt
+# OS / temp files
+*.out
+*.tmp
+*.swp
+*.swo
+*.DS_Store
+*.pid
