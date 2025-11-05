@@ -117,9 +117,4 @@ JAVA_HOME=$(usr/libexec/java_home -v 17) ./gradlew test
 - **Проблемы старта Testcontainers** — проверьте, что Docker запущен и доступ в интернет для загрузки образов есть
 - **Сбой проверки JWT** — секрет `JWT_SECRET` должен быть не короче 32 байт (HS256)
 
-## Дальнейшие шаги
-
-- Завершить этап `phase6-devops`: Dockerfile, docker-compose, CI‑конвейер
-- Дополнить документацию (например, OpenAPI/Swagger) после закрепления API
-
 
