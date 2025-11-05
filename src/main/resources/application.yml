@@ -25,3 +25,9 @@ logging:
     org.springframework: info
     org.hibernate.SQL: warn
     org.hibernate.type.descriptor.sql.BasicBinder: warn
+
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET:change-me}
+    expiration-minutes: 60
+    refresh-expiration-days: 7
