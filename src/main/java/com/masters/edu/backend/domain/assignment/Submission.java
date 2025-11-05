@@ -6,6 +6,7 @@ import com.masters.edu.backend.domain.common.BaseEntity;
 import com.masters.edu.backend.domain.user.User;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -51,9 +52,6 @@ public class Submission extends BaseEntity {
     @Column(name = "submitted_at")
     private OffsetDateTime submittedAt;
 
-    @Column(name = "graded_at")
-    private OffsetDateTime gradedAt;
-
     @Column(name = "content", columnDefinition = "text")
     private String content;
 
@@ -65,6 +63,9 @@ public class Submission extends BaseEntity {
 
     @Column(name = "feedback", columnDefinition = "text")
     private String feedback;
+
+    @Embedded
+    private SubmissionAudit audit = SubmissionAudit.empty();
 }
 
 

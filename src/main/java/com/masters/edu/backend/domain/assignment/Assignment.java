@@ -10,6 +10,7 @@ import com.masters.edu.backend.domain.user.User;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -73,6 +74,9 @@ public class Assignment extends BaseEntity {
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Submission> submissions = new ArrayList<>();
+
+    @Embedded
+    private AssignmentSettings settings = AssignmentSettings.defaults();
 }
 
 
