@@ -16,9 +16,15 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
 
     Optional<Course> findBySlugAndTeacherId(String slug, Long teacherId);
 
+    @EntityGraph(attributePaths = {"teacher", "category"})
     Page<Course> findByStatus(CourseStatus status, Pageable pageable);
 
-    @Query("select c from Course c join fetch c.teacher where c.id = :id")
+    @Query("select distinct c from Course c " +
+            "left join fetch c.teacher " +
+            "left join fetch c.category " +
+            "left join fetch c.modules m " +
+            "left join fetch m.lessons " +
+            "where c.id = :id")
     Optional<Course> findDetailedById(Long id);
 
     @EntityGraph(attributePaths = {"category", "teacher"})
