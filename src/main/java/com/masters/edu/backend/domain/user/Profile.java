@@ -24,8 +24,7 @@ import lombok.Setter;
 })
 public class Profile extends BaseEntity {
 
-    @Lob
-    @Column(name = "bio")
+    @Column(name = "bio", columnDefinition = "text")
     private String bio;
 
     @Column(name = "avatar_url", length = 512)

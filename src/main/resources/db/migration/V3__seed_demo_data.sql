@@ -17,8 +17,8 @@ VALUES
 
 INSERT INTO tags (id, name, slug, description, created_at, updated_at)
 VALUES
-    (1, 'Java', 'java', 'Java programming language'),
-    (2, 'Spring Boot', 'spring-boot', 'Spring Boot framework');
+    (1, 'Java', 'java', 'Java programming language', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+    (2, 'Spring Boot', 'spring-boot', 'Spring Boot framework', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO courses (id, title, slug, summary, description, difficulty_level, estimated_duration, language, published_at, status, category_id, teacher_id, created_at, updated_at)
 VALUES
