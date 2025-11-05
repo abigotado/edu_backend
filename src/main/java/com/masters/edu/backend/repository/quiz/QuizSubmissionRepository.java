@@ -16,11 +16,15 @@ public interface QuizSubmissionRepository extends JpaRepository<QuizSubmission, 
 
     long countByQuizIdAndStatus(Long quizId, QuizSubmissionStatus status);
 
-    @EntityGraph(attributePaths = {"answers", "answers.answerOption"})
+    @EntityGraph(attributePaths = {"answers", "answers.answerOption", "answers.question"})
     Optional<QuizSubmission> findWithAnswersById(Long id);
+
+    List<QuizSubmission> findByStudentId(Long studentId);
 
     @Query("select qs from QuizSubmission qs join fetch qs.quiz where qs.id = :id")
     Optional<QuizSubmission> findDetailedById(Long id);
+
+    List<QuizSubmission> findByQuizId(Long quizId);
 }
 
 
