@@ -14,7 +14,6 @@ Spring Boot 3.4‑приложение для учебной платформы.
 - `src/main/java` — прикладной код (сущности, сервисы, контроллеры, безопасность)
 - `src/main/resources` — конфигурация Spring Boot и SQL‑миграции (`db/migration`)
 - `src/test/java` — интеграционные тесты с Testcontainers и целевые unit‑тесты
-- `docs/` — дополнительные заметки по предметной области, миграциям и API (папку можно удалить, когда README будет полностью покрывать нужные инструкции)
 
 ## Конфигурация
 
@@ -95,8 +94,9 @@ JAVA_HOME=$(usr/libexec/java_home -v 17) ./gradlew test
 
 ## Docker и деплой
 
-- Dockerfile и docker-compose будут добавлены в рамках задачи `phase6-devops`
-- Планируется интеграция CI/CD после завершения DevOps‑этапа
+- `Dockerfile` — многоэтапная сборка приложения (build + minimal runtime)
+- `docker-compose.yml` — запуск приложения и PostgreSQL одним командой
+- CI (см. раздел «Автоматизация») гарантирует прогон тестов при обновлениях в `main`
 
 ## Полезные команды
 
@@ -140,7 +140,7 @@ docker build -t edu-backend:latest .
 
 ## Автоматизация
 
-- GitHub Actions: `.github/workflows/ci.yml` запускает `./gradlew test` при каждом push и pull request. 
+- GitHub Actions: `.github/workflows/ci.yml` запускает `./gradlew test` при каждом push в ветку `main`.
 - Все зависимости устанавливаются автоматически через Gradle; дополнительных действий по настройке библиотек не требуется.
 
 ## Устранение неполадок

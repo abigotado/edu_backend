@@ -10,6 +10,7 @@ build/
 # Gradle
 .gradle/
 !/gradle/wrapper/gradle-wrapper.jar
+.gradle-home/
 
 # Maven (if generated)
 **/pom.xml.tag
@@ -71,3 +72,6 @@ bin/
 *.swo
 *.DS_Store
 *.pid
+
+# Project docs (перенесено в README)
+docs/
