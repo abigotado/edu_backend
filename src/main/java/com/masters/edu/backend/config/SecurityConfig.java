@@ -2,6 +2,7 @@ package com.masters.edu.backend.config;
 
 import com.masters.edu.backend.security.JwtAuthenticationFilter;
 import com.masters.edu.backend.security.JwtProperties;
+import com.masters.edu.backend.security.RestAccessDeniedHandler;
 import com.masters.edu.backend.security.RestAuthenticationEntryPoint;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,13 +30,16 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RestAuthenticationEntryPoint authenticationEntryPoint;
+    private final RestAccessDeniedHandler accessDeniedHandler;
     private final UserDetailsServiceImpl userDetailsService;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
             RestAuthenticationEntryPoint authenticationEntryPoint,
+            RestAccessDeniedHandler accessDeniedHandler,
             UserDetailsServiceImpl userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.accessDeniedHandler = accessDeniedHandler;
         this.userDetailsService = userDetailsService;
     }
 
@@ -52,7 +56,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/modules/**").permitAll()
                         .anyRequest()
                         .authenticated())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
