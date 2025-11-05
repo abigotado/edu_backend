@@ -76,6 +76,31 @@ class EnrollmentControllerIntegrationTest extends IntegrationTestSupport {
                 .orElseThrow();
         assertThat(enrollment.getStatus()).isEqualTo(EnrollmentStatus.ACTIVE);
     }
+
+    @Test
+    @WithMockUser(username = "student@example.com", roles = {"STUDENT"})
+    void enroll_duplicateEnrollment_returnsBadRequest() throws Exception {
+        User student = new User();
+        student.setEmail("duplicate.student@example.com");
+        student.setPasswordHash(passwordEncoder.encode("secret"));
+        student.setFullName("Duplicate Student");
+        student.setRole(UserRole.STUDENT);
+        student.setStatus(UserStatus.ACTIVE);
+        Long studentId = userRepository.save(student).getId();
+
+        EnrollRequest request = new EnrollRequest(studentId);
+
+        mockMvc.perform(post("/api/courses/{courseId}/enrollments", 1L)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/courses/{courseId}/enrollments", 1L)
+                .contentType(APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Student already enrolled in this course"));
+    }
 }
 
 
