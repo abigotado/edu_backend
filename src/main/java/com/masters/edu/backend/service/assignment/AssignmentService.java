@@ -39,11 +39,14 @@ public class AssignmentService {
         this.userRepository = userRepository;
     }
 
-    public Assignment createAssignment(Long lessonId, Assignment assignment) {
+    public Assignment createAssignment(Long lessonId, Assignment assignment, Long creatorId) {
         Lesson lesson = lessonRepository.findById(lessonId)
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found: " + lessonId));
         assignment.setLesson(lesson);
         assignment.setStatus(AssignmentStatus.DRAFT);
+        if (creatorId != null) {
+            userRepository.findById(creatorId).ifPresent(assignment::setCreator);
+        }
         return assignmentRepository.save(assignment);
     }
 
@@ -64,6 +67,15 @@ public class AssignmentService {
                 .orElse(null);
 
         if (existing != null) {
+            if (existing.getStatus() == SubmissionStatus.GRADED) {
+                existing.setScore(null);
+                existing.setFeedback(null);
+                SubmissionAudit audit = existing.getAudit();
+                if (audit != null) {
+                    audit.setGradedAt(null);
+                    audit.setGradedById(null);
+                }
+            }
             existing.setContent(submission.getContent());
             existing.setAttachmentPath(submission.getAttachmentPath());
             existing.setSubmittedAt(OffsetDateTime.now());
@@ -104,6 +116,30 @@ public class AssignmentService {
 
     public long submittedCount(Long assignmentId) {
         return submissionRepository.countByAssignmentIdAndStatus(assignmentId, SubmissionStatus.SUBMITTED);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Assignment> assignmentsForLesson(Long lessonId) {
+        return assignmentRepository.findByLessonIdOrderByOrderIndexAsc(lessonId);
+    }
+
+    @Transactional(readOnly = true)
+    public Assignment getAssignment(Long assignmentId) {
+        Assignment assignment = assignmentRepository.findDetailedById(assignmentId);
+        if (assignment == null) {
+            throw new EntityNotFoundException("Assignment not found: " + assignmentId);
+        }
+        return assignment;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Submission> submissionsForAssignment(Long assignmentId) {
+        return submissionRepository.findByAssignmentId(assignmentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Submission> submissionsForStudent(Long studentId) {
+        return submissionRepository.findByStudentId(studentId);
     }
 }
 

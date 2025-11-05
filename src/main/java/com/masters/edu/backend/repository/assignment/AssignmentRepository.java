@@ -11,6 +11,8 @@ public interface AssignmentRepository extends JpaRepository<Assignment, Long> {
 
     List<Assignment> findByLessonModuleCourseId(Long courseId);
 
+    List<Assignment> findByLessonIdOrderByOrderIndexAsc(Long lessonId);
+
     @Query("select a from Assignment a join fetch a.lesson l join fetch l.module m where a.id = :id")
     Assignment findDetailedById(Long id);
 }
