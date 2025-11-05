@@ -39,6 +39,7 @@ public class EnrollmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Student not found: " + studentId));
 
         return enrollmentRepository.findByCourseIdAndStudentId(courseId, studentId)
+                .map(enrollment -> reactivateIfNeeded(enrollment))
                 .orElseGet(() -> createEnrollment(course, student));
     }
 
@@ -51,8 +52,25 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
+    private Enrollment reactivateIfNeeded(Enrollment enrollment) {
+        if (enrollment.getStatus() == EnrollmentStatus.WITHDRAWN) {
+            enrollment.setStatus(EnrollmentStatus.ACTIVE);
+            enrollment.setEnrolledAt(OffsetDateTime.now());
+            return enrollmentRepository.save(enrollment);
+        }
+        throw new jakarta.validation.ValidationException("Student already enrolled in this course");
+    }
+
     public List<Enrollment> enrollmentsForStudent(Long studentId, EnrollmentStatus status) {
         return enrollmentRepository.findByStudentIdAndStatus(studentId, status);
+    }
+
+    public List<Enrollment> enrollmentsForStudent(Long studentId) {
+        return enrollmentRepository.findByStudentId(studentId);
+    }
+
+    public List<Enrollment> enrollmentsForCourse(Long courseId) {
+        return enrollmentRepository.findByCourseId(courseId);
     }
 
     public void updateStatus(Long enrollmentId, EnrollmentStatus status) {
@@ -64,6 +82,14 @@ public class EnrollmentService {
 
     public long activeCount(Long courseId) {
         return enrollmentRepository.countByCourseAndStatus(courseId, EnrollmentStatus.ACTIVE);
+    }
+
+    public void unenroll(Long enrollmentId) {
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Enrollment not found: " + enrollmentId));
+        enrollment.setStatus(EnrollmentStatus.WITHDRAWN);
+        enrollment.setLastAccessAt(OffsetDateTime.now());
+        enrollmentRepository.save(enrollment);
     }
 }
 
