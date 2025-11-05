@@ -3,9 +3,11 @@ package com.masters.edu.backend.web.mapper;
 import java.util.List;
 
 import com.masters.edu.backend.domain.course.Course;
+import com.masters.edu.backend.domain.lesson.Lesson;
 import com.masters.edu.backend.domain.lesson.Module;
 import com.masters.edu.backend.web.dto.course.CourseDetailDto;
 import com.masters.edu.backend.web.dto.course.CourseSummaryDto;
+import com.masters.edu.backend.web.dto.course.LessonDto;
 import com.masters.edu.backend.web.dto.course.ModuleDto;
 
 import org.mapstruct.Mapper;
@@ -23,10 +25,14 @@ public interface CourseMapper {
     @Mapping(target = "modules", source = "modules")
     CourseDetailDto toDetail(Course course);
 
-    @Mapping(target = "orderIndex", source = "orderIndex")
+    @Mapping(target = "lessons", source = "lessons")
     ModuleDto toModuleDto(Module module);
 
     List<ModuleDto> toModuleDtos(List<Module> modules);
+
+    LessonDto toLessonDto(Lesson lesson);
+
+    List<LessonDto> toLessonDtos(List<Lesson> lessons);
 }
 
 

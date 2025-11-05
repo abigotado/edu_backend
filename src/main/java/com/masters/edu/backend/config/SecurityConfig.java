@@ -48,6 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**", "/actuator/health", "/swagger-ui/**", "/v3/api-docs/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/courses/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/modules/**").permitAll()
                         .anyRequest()
                         .authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
