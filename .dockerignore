@@ -1,0 +1,23 @@
+# Gradle
+.gradle
+build
+
+# IDE / tooling
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+
+# Docker
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Misc
+node_modules
+*.log
+*.tmp
+

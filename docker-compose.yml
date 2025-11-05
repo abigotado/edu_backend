@@ -1,0 +1,34 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: edu-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: edu_backend_dev
+      POSTGRES_USER: edu_dev
+      POSTGRES_PASSWORD: edu_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: edu-backend
+    depends_on:
+      - postgres
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DEV_DB_URL: jdbc:postgresql://postgres:5432/edu_backend_dev
+      DEV_DB_USERNAME: edu_dev
+      DEV_DB_PASSWORD: edu_dev
+      JWT_SECRET: your-secret-key-with-at-least-256-bits-for-HS256-algorithm
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+

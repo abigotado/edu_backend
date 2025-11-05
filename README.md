@@ -111,6 +111,33 @@ JAVA_HOME=$(usr/libexec/java_home -v 17) ./gradlew test
 ./gradlew bootJar
 ```
 
+## Запуск в Docker
+
+### Сборка и запуск через docker-compose
+
+```bash
+docker compose up --build
+```
+
+Сервисы:
+
+- `postgres` — база данных PostgreSQL 16 с предустановленным пользователем `edu_dev`
+- `app` — Spring Boot приложение, запущенное c профилем `dev`
+
+После успешного старта API доступно на `http://localhost:8080`. Для завершения работы используйте `Ctrl+C`, затем при необходимости очистите ресурсы:
+
+```bash
+docker compose down -v
+```
+
+### Сборка образа отдельно
+
+```bash
+docker build -t edu-backend:latest .
+```
+
+При запуске контейнера укажите переменные окружения `DEV_DB_URL`, `DEV_DB_USERNAME`, `DEV_DB_PASSWORD` и `JWT_SECRET`, если они отличаются от значений по умолчанию.
+
 ## Устранение неполадок
 
 - **Ошибки валидации Flyway** — убедитесь, что БД пуста или соответствует текущему baseline
