@@ -1,123 +1,125 @@
-# Education Platform Backend
+# Бэкенд образовательной платформы
 
-Spring Boot 3.4 backend for an educational platform. The service manages courses, enrollments, assignments, quizzes, authentication, and exposes a REST API backed by PostgreSQL with Flyway migrations.
+Spring Boot 3.4‑приложение для учебной платформы. Сервис отвечает за пользователей, курсы, модули и уроки, домашние задания, тесты, аутентификацию по JWT, а также предоставляет REST API поверх PostgreSQL. Управление схемой выполняется через Flyway.
 
-## Prerequisites
+## Требования
 
-- Java 17+ (JDK 17 recommended)
-- Gradle (wrapper included)
-- Docker (required for Testcontainers-driven tests)
-- PostgreSQL 14+ (or Dockerised instance)
+- Java 17+ (рекомендуется JDK 17)
+- Gradle (используется обёртка `./gradlew`)
+- Docker (для интеграционных тестов на Testcontainers)
+- PostgreSQL 14+ или совместимый контейнер
 
-## Project Structure
+## Структура проекта
 
-- `src/main/java`: Application source (domain entities, services, controllers, security)
-- `src/main/resources`: Application configuration and Flyway migrations (`db/migration`)
-- `src/test/java`: Integration tests (Spring Boot + Testcontainers) and focused unit tests
-- `docs/`: Architecture notes, domain model, migration plan, and API planning documents
+- `src/main/java` — прикладной код (сущности, сервисы, контроллеры, безопасность)
+- `src/main/resources` — конфигурация Spring Boot и SQL‑миграции (`db/migration`)
+- `src/test/java` — интеграционные тесты с Testcontainers и целевые unit‑тесты
+- `docs/` — дополнительные заметки по предметной области, миграциям и API (папку можно удалить, когда README будет полностью покрывать нужные инструкции)
 
-## Configuration
+## Конфигурация
 
-Configuration is managed via layered `application*.yml` files:
+Конфигурация разбита по профилям в файлах `application*.yml`:
 
-- `application.yml`: Base configuration with profile defaults, JPA/Flyway settings, and JWT properties
-- `application-dev.yml`: Development datasource, Hikari pool settings, additional logging
-- `application-test.yml`: Test profile using Testcontainers; Flyway clean enabled
+- `application.yml` — базовые настройки (профиль по умолчанию, JPA/Flyway, параметры JWT)
+- `application-dev.yml` — подключение к dev‑базе, настройки пула Hikari, расширенный лог SQL
+- `application-test.yml` — профиль для тестов c Testcontainers и разрешённым `flyway.clean`
 
-Key environment variables (override defaults as needed):
+### Переменные окружения
 
-| Variable | Purpose | Default |
+| Переменная | Назначение | Значение по умолчанию |
 | --- | --- | --- |
-| `DEV_DB_URL` | JDBC URL for local Postgres | `jdbc:postgresql://localhost:5432/edu_backend_dev` |
-| `DEV_DB_USERNAME` | Username for local Postgres | `edu_dev` |
-| `DEV_DB_PASSWORD` | Password for local Postgres | `edu_dev` |
-| `JWT_SECRET` | HMAC secret for JWT tokens | `your-secret-key-with-at-least-256-bits-for-HS256-algorithm` |
+| `DEV_DB_URL` | JDBC‑URL локальной базы | `jdbc:postgresql://localhost:5432/edu_backend_dev` |
+| `DEV_DB_USERNAME` | Пользователь базы | `edu_dev` |
+| `DEV_DB_PASSWORD` | Пароль пользователя | `edu_dev` |
+| `JWT_SECRET` | Секрет для подписи JWT (HS256) | `your-secret-key-with-at-least-256-bits-for-HS256-algorithm` |
 
-## Database Migrations
+## Миграции базы данных
 
-Flyway SQL migrations live under `src/main/resources/db/migration`:
+Все SQL‑миграции находятся в `src/main/resources/db/migration`:
 
-1. `V1__baseline.sql` – initializes Flyway metadata
-2. `V2__create_core_schema.sql` – full relational schema covering users, courses, lessons, assignments, quizzes, etc.
-3. `V3__seed_demo_data.sql` – demo dataset for development/integration testing
+1. `V1__baseline.sql` — инициализация метаданных Flyway
+2. `V2__create_core_schema.sql` — полная схема (пользователи, курсы, уроки, задания, тесты и т.д.)
+3. `V3__seed_demo_data.sql` — демо‑данные для разработки и тестов
 
-Flyway runs automatically on application startup for each profile. Ensure your database user has rights to create/alter schema.
+При запуске приложения Flyway автоматически применяет миграции. Пользователь БД должен иметь права на создание/изменение схемы.
 
-### Running Migrations Manually
+### Ручной запуск миграций
 
 ```bash
-./gradlew flywayMigrate -Dflyway.url=jdbc:postgresql://localhost:5432/edu_backend_dev \
-  -Dflyway.user=edu_dev -Dflyway.password=edu_dev
+./gradlew flywayMigrate \
+  -Dflyway.url=jdbc:postgresql://localhost:5432/edu_backend_dev \
+  -Dflyway.user=edu_dev \
+  -Dflyway.password=edu_dev
 ```
 
-## Running the Application
+## Запуск приложения
 
-1. Ensure Postgres is running and accessible with configured credentials.
-2. Export any overriding environment variables (if not using defaults).
-3. Launch the Spring Boot application:
+1. Убедитесь, что PostgreSQL запущен и доступен с нужными реквизитами.
+2. При необходимости переопределите переменные окружения (см. таблицу выше).
+3. Запустите Spring Boot:
 
 ```bash
 ./gradlew bootRun
 ```
 
-The API listens on `http://localhost:8080` by default. JWT authentication is required for most endpoints; use `/api/auth/register`, `/api/auth/login`, and `/api/auth/refresh` to obtain tokens.
+По умолчанию API доступен на `http://localhost:8080`. Для большинства операций требуется JWT‑авторизация. Получить токены можно через эндпоинты `/api/auth/register`, `/api/auth/login`, `/api/auth/refresh`.
 
-## Testing
+## Тестирование
 
-The project uses JUnit 5 with Testcontainers (Postgres) for integration coverage plus focused unit tests.
+Используются JUnit 5 и Testcontainers (PostgreSQL) для интеграционных сценариев, а также отдельные unit‑тесты.
 
 ```bash
 JAVA_HOME=$(usr/libexec/java_home -v 17) ./gradlew test
 ```
 
-> Note: Docker must be running for Testcontainers. The test profile seeds demo data via Flyway.
+> Важно: Docker должен быть запущен, иначе Testcontainers не стартует контейнер базы. Профиль `test` автоматически накатывает демо‑данные через Flyway.
 
-### Selected Test Suites
+### Основные тестовые наборы
 
-- `EnrollmentControllerIntegrationTest` – exercises enrollment endpoints and security rules
-- `QuizServiceIntegrationTest` – validates quiz attempt lifecycle and scoring
-- `JwtTokenProviderTest` – unit-level token generation/validation checks
+- `EnrollmentControllerIntegrationTest` — проверка эндпоинтов управления записями на курс и правил доступа
+- `QuizServiceIntegrationTest` — сценарии старта/прохождения тестов и начисления баллов
+- `JwtTokenProviderTest` — генерация и валидация JWT без запуска Spring‑контекста
 
-## API Overview
+## Обзор API
 
-High-level REST endpoints (see controllers under `src/main/java/.../web/controller`):
+Основные REST‑эндпоинты (детали — в контроллерах `src/main/java/.../web/controller`):
 
-- `/api/auth/**` – Authentication and token refresh
-- `/api/courses/**` – Course discovery and management
-- `/api/modules/**`, `/api/lessons/**` – Modular course content
-- `/api/assignments/**`, `/api/submissions/**` – Assignment workflow
-- `/api/quizzes/**` – Quiz creation and attempt submission
-- `/api/enrollments/**` – Enrollment lifecycle for students and administrators
+- `/api/auth/**` — аутентификация, регистрация и выдача токенов
+- `/api/courses/**` — каталог и управление курсами
+- `/api/modules/**`, `/api/lessons/**` — модульная структура курса
+- `/api/assignments/**`, `/api/submissions/**` — работа с заданиями и решениями
+- `/api/quizzes/**` — тесты, вопросы и попытки
+- `/api/enrollments/**` — оформление, актуализация и отмена записей на курс
 
-Public GET access is available for course/module/lesson discovery; other operations require roles (`STUDENT`, `TEACHER`, `ADMIN`).
+Для просмотра курсов/модулей/уроков достаточно GET‑запросов без авторизации; остальные операции требуют ролей `STUDENT`, `TEACHER` или `ADMIN`.
 
-## Docker & Deployment (Upcoming)
+## Docker и деплой
 
-- Dockerfile and compose definitions are scheduled under `phase6-devops`
-- CI pipeline integration is also part of the remaining roadmap
+- Dockerfile и docker-compose будут добавлены в рамках задачи `phase6-devops`
+- Планируется интеграция CI/CD после завершения DevOps‑этапа
 
-## Useful Commands
+## Полезные команды
 
 ```bash
-# Compile without running tests
+# Компиляция без запуска тестов
 ./gradlew compileJava
 
-# Run only a specific test class
+# Запуск конкретного тестового класса
 ./gradlew test --tests "com.masters.edu.backend.service.quiz.QuizServiceIntegrationTest"
 
-# Build an executable jar
+# Сборка исполняемого JAR
 ./gradlew bootJar
 ```
 
-## Troubleshooting
+## Устранение неполадок
 
-- **Flyway validation errors** – ensure your database is empty/clean for the current migration baseline
-- **Testcontainers initialization issues** – verify Docker daemon availability and network access to pull base images
-- **JWT authentication failures** – check `JWT_SECRET` length (HS256 requires ≥32 bytes)
+- **Ошибки валидации Flyway** — убедитесь, что БД пуста или соответствует текущему baseline
+- **Проблемы старта Testcontainers** — проверьте, что Docker запущен и доступ в интернет для загрузки образов есть
+- **Сбой проверки JWT** — секрет `JWT_SECRET` должен быть не короче 32 байт (HS256)
 
-## Roadmap
+## Дальнейшие шаги
 
-- `phase6-devops`: containerization artifacts and optional CI workflow
-- Further documentation: API contract details (OpenAPI/Swagger) and UI integration guide
+- Завершить этап `phase6-devops`: Dockerfile, docker-compose, CI‑конвейер
+- Дополнить документацию (например, OpenAPI/Swagger) после закрепления API
 
 
