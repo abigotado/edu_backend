@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: ${DEV_DB_URL:jdbc:postgresql://localhost:5432/edu_backend_dev}
+    username: ${DEV_DB_USERNAME:edu_dev}
+    password: ${DEV_DB_PASSWORD:edu_dev}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+  jpa:
+    show-sql: true
+  flyway:
+    clean-disabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace

@@ -27,6 +27,10 @@ dependency-reduced-pom.xml
 !**/application-example.yml
 !**/application-example.yaml
 !**/application-example.properties
+!src/main/resources/application.yml
+!src/main/resources/application-dev.yml
+!src/main/resources/application-test.yml
+!src/test/resources/application-test.yml
 
 # IDE files
 ## IntelliJ IDEA / JetBrains
